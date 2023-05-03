@@ -1,33 +1,38 @@
-import './userRegisterScreen.css';
+import './usersScreen.css';
 import Header from '../../components/Header';
-import { useState } from 'react';
+import UserCard from '../../components/UserCard';
+import { useState, useEffect } from 'react';
+import api from '../../api/api';
 
-function UserRegisterScreen(){
+function UsersScreen(){
 
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
+    const [users, setUsers] = useState([]);
 
-    function handleSubmit(event){ 
-        event.preventDefault();
-      }
-    
-      return (
+    useEffect(()=>{
+        async function getUsers(){
+            const response = await api.get('/users');
+            setUsers(response.data);
+        }
+
+        getUsers();
+    },[]);
+
+    return(
         <>
-          <Header title="Cadastro de usuário"/>
-          <main>
-            <form onSubmit={handleSubmit}>
-              <label>Nome</label>
-              <input type="text" value={name}/>
-    
-              <label>Email</label>
-              <input type="email" value={email}/>
-    
-              <button type="submit">Cadastrar</button>
-            </form>
-          </main>
+            <Header title="Usuários cadastrados"/>
+            <main>
+                {users.map(user=> 
+                        <UserCard 
+                            key={user.id}
+                            id={user.id} 
+                            name={user.name} 
+                            email={user.email}
+                        /> 
+                )}
+            </main>
         </>
-      );
-    
+    );
+
 }
 
-export default UserRegisterScreen;
+export default UsersScreen;
